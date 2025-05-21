@@ -35,6 +35,13 @@ dependencies:
   flutter_bloc: 9.0.0
   cupertino_icons: ^1.0.8
   flutter_screenutil: ^5.9.0
+  # Pentru animații avansate
+  animations: ^2.0.7
+  # Pentru efecte de text animat
+  simple_animations: ^5.0.0+1
+  # Pentru control mai bun al animațiilor
+  animated_text_kit: ^4.2.2
+  flare_flutter: ^3.0.0
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.3.5
@@ -49,6 +56,7 @@ dependencies:
     git:
       url: "https://github.com/intelectsoft-s-r-l/ProtoDefinitionsDart"
       ref: development
+
 
 dev_dependencies:
   flutter_test:

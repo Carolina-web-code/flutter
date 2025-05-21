@@ -1,8 +1,6 @@
 import 'package:core_retail/data/bill/models/line/line_model.dart';
-import 'package:core_retail/data/bill/models/line/restaurant_line_model.dart';
 import 'package:core_retail/data/bill/models/line/topping_line_model.dart';
 import 'package:core_retail/data/price_list/models/assortment/topping_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // Pentru listEquals
 
 class CartProvider extends ChangeNotifier {
@@ -16,7 +14,7 @@ class CartProvider extends ChangeNotifier {
   int get totalItems => _items.length;
 
   // Total price of all items (inclusiv topinguri)
-  double get totalPrice => _items.isEmpty?0:_items.map((e)=>(e.salePrice??0) * e.quantity).reduce((a,b)=> a+b);
+  double get totalPrice => _items.isEmpty?0:_items.map((e)=>(e.assortment.price??0) * e.quantity).reduce((a,b)=> a+b);
 
   void toggleOrderType() {
     _isPackage = !_isPackage;
@@ -53,7 +51,7 @@ class CartProvider extends ChangeNotifier {
 
   void updateQuantity(String productId, int newQuantity, {List<ToppingLineModel>? toppings}) {
     final index = _items.indexWhere((item) =>
-    item.id == productId &&
+    item.assortment.id == productId &&
         (toppings == null || listEquals(
             item.toppings?.map((t) => t.toppingData.id).toList()?..sort(),
             toppings.map((t) => t.toppingData.id).toList()..sort()
@@ -74,14 +72,14 @@ class CartProvider extends ChangeNotifier {
   }
   void removeFromCart(String productId) {
     // Șterge primul produs care are ID-ul dat (ignoră toppingurile)
-    _items.removeWhere((item) => item.id == productId);
+    _items.removeWhere((item) => item.assortment.id == productId);
     notifyListeners();
   }
 
   void removeFromCartWithToppings(String productId, List<ToppingLineModel> toppings) {
     // Șterge doar dacă ID-ul și toppingurile se potrivesc
     _items.removeWhere((item) =>
-    item.id == productId &&
+    item.assortment.id == productId &&
         listEquals(
             item.toppings?.map((t) => t.toppingData.id).toList()?..sort(),
             toppings.map((t) => t.toppingData.id).toList()..sort()
@@ -109,7 +107,7 @@ class CartProvider extends ChangeNotifier {
   // Funcție helper pentru a găsi un item în coș după ID și topinguri
   LineModel? findItem(String productId, List<ToppingModel> toppings) {
     return _items.firstWhereOrNull((item) =>
-    item.id == productId &&
+    item.assortment.id == productId &&
         listEquals(
             item.toppings?.map((t) => t.toppingData.id).toList()?..sort(),
             toppings.map((t) => t.id).toList()..sort()

@@ -3,6 +3,8 @@ import 'package:core_retail/presentation/services/bloc/local_server_connection_b
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiosk/scan.dart';
+import 'package:proto_definitions/generated/commons.pbenum.dart';
+import 'package:proto_definitions/generated/commons.pbjson.dart';
 
 class ConnectionWidget extends StatelessWidget {
   const ConnectionWidget({super.key});
@@ -26,7 +28,7 @@ class ConnectionWidget extends StatelessWidget {
             break;
         }
       },
-      child: const Scaffold(body: Center(child: ConnectionPage())),
+      child: const Scaffold(body: Center(child: ConnectionPage(typeService: TypeService.RESTAURANT_KIOSK))),
     );
   }
 }

@@ -12,19 +12,89 @@ import 'generated/l10n.dart';
 import 'meniu.dart';
 
 class PizzaPage extends StatefulWidget {
-  const PizzaPage({super.key});
+  const PizzaPage({
+    super.key,
+    this.duration = const Duration(seconds: 3),
+    this.curve = Curves.easeInOut,
+  });
+
+  final Duration duration;
+  final Curve curve;
 
   @override
   State<PizzaPage> createState() => _PizzaPageState();
 }
 
-class _PizzaPageState extends State<PizzaPage> {
+class _PizzaPageState extends State<PizzaPage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late CurvedAnimation _animation;
+  bool _isButtonPressed = false;
+  int? _currentPressedButton; // 1 pentru "La loc", 2 pentru "La pachet"
+
   @override
   void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: widget.curve,
+    );
+
+    _controller.forward();
+
+    // Initialize blocs
     context.read<FiscalConnectionBloc>().add(InitFiscal());
     context.read<McrConnectionBloc>().add(InitMcr());
     context.read<PriceListBloc>().add(InitPriceList());
-    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(PizzaPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.duration != widget.duration) {
+      _controller.duration = widget.duration;
+    }
+
+    if (oldWidget.curve != widget.curve) {
+      _animation.curve = widget.curve;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleButtonTap(int buttonId) {
+    setState(() {
+      _isButtonPressed = true;
+      _currentPressedButton = buttonId;
+    });
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        _isButtonPressed = false;
+      });
+
+      final orderTypeProvider = Provider.of<OrderTypeProvider>(context, listen: false);
+      if (buttonId == 1) {
+        orderTypeProvider.setPackage(false);
+      } else {
+        orderTypeProvider.setPackage(true);
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MeniuPage()),
+      );
+    });
   }
 
   @override
@@ -46,18 +116,20 @@ class _PizzaPageState extends State<PizzaPage> {
             // Full screen background image
             Positioned.fill(
               child: Image.asset(
-                'assets/pizza_background.png', // Replace with your image path
+                'assets/pizza_background.png',
                 fit: BoxFit.cover,
               ),
             ),
 
-            // Center image
+            // Center image with animation
             Center(
-              child: Image.asset(
-                'assets/pizza_center.png',
-                // Replace with your center image path
-                width: 300,
-                height: 300,
+              child: ScaleTransition(
+                scale: _animation,
+                child: Image.asset(
+                  'assets/pizza_center.png',
+                  width: 300,
+                  height: 300,
+                ),
               ),
             ),
 
@@ -73,7 +145,7 @@ class _PizzaPageState extends State<PizzaPage> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.settings, color: Colors.black, size: 30),
+                  icon: const Icon(Icons.settings, color: Colors.black, size: 30),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -83,6 +155,7 @@ class _PizzaPageState extends State<PizzaPage> {
                 ),
               ),
             ),
+
             // Language selector
             Positioned(
               top: 35,
@@ -100,7 +173,7 @@ class _PizzaPageState extends State<PizzaPage> {
                         listen: false,
                       ).saveLanguageToSp();
                     },
-                    child: Text(
+                    child: const Text(
                       'RO',
                       style: TextStyle(
                         color: Colors.white,
@@ -110,7 +183,7 @@ class _PizzaPageState extends State<PizzaPage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   InkWell(
                     onTap: () {
                       Provider.of<LanguageProvider>(
@@ -122,7 +195,7 @@ class _PizzaPageState extends State<PizzaPage> {
                         listen: false,
                       ).saveLanguageToSp();
                     },
-                    child: Text(
+                    child: const Text(
                       'RU',
                       style: TextStyle(
                         color: Colors.white,
@@ -136,92 +209,102 @@ class _PizzaPageState extends State<PizzaPage> {
               ),
             ),
 
-            // Footer with two white rectangles
-            // Footer with two white rectangles
+            // Footer with two animated buttons
             Positioned(
-              bottom: 0,
+              bottom: 50, // Butoanele sunt ridicate mai sus
               left: 0,
               right: 0,
-              child: Container(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // First rectangle - "La loc"
-                    // First rectangle - "La loc"
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          orderTypeProvider.setPackage(false);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MeniuPage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color:
-                                !orderTypeProvider.isPackage
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // First button - "La loc"
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _handleButtonTap(1),
+                          child: Transform.scale(
+                            scale: _isButtonPressed && _currentPressedButton == 1 ? 0.95 : 1.0,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: !orderTypeProvider.isPackage
                                     ? Colors.yellow
                                     : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            S.of(context).loc,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontFamily: 'Arial',
-                              height: 0.04,
-                              letterSpacing: -0.64,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: _isButtonPressed && _currentPressedButton == 1
+                                    ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 5),
+                                  )
+                                ]
+                                    : null,
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                S.of(context).loc,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontFamily: 'Arial',
+                                  height: 0.04,
+                                  letterSpacing: -0.64,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // Second rectangle - "La pachet"
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          orderTypeProvider.setPackage(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MeniuPage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color:
-                                orderTypeProvider.isPackage
+                      // Second button - "La pachet"
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _handleButtonTap(2),
+                          child: Transform.scale(
+                            scale: _isButtonPressed && _currentPressedButton == 2 ? 0.95 : 1.0,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: orderTypeProvider.isPackage
                                     ? Colors.yellow
                                     : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            S.of(context).pachet,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontFamily: 'Arial',
-                              height: 0.04,
-                              letterSpacing: -0.64,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: _isButtonPressed && _currentPressedButton == 2
+                                    ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 5),
+                                  )
+                                ]
+                                    : null,
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                S.of(context).pachet,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontFamily: 'Arial',
+                                  height: 0.04,
+                                  letterSpacing: -0.64,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

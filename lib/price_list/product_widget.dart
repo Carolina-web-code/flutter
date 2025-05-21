@@ -7,8 +7,8 @@ import '../product_overlay.dart';
 class ProductWidget extends StatefulWidget {
   final AssortmentModel assortment;
 
-  const ProductWidget({super.key, required this.assortment});
-
+  const ProductWidget({super.key, required this.assortment, required this.callback});
+  final VoidCallback callback;
   @override
   State<ProductWidget> createState() => _ProductWidgetState();
 }
@@ -17,7 +17,13 @@ class _ProductWidgetState extends State<ProductWidget> {
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(
-      onTap: () => _showProductOverlay(context),
+
+      onTap: () {
+        if(widget.assortment.isFolder ==false){
+        _showProductOverlay(context);}else{
+        widget.callback();
+        }},
+
       child: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,6 +42,7 @@ class _ProductWidgetState extends State<ProductWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Text(
                     widget.assortment.name??'',
                     style: const TextStyle(
@@ -45,6 +52,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       height: 1,
                     ),
                   ),
+                  if(widget.assortment.isFolder ==false)
                   Text(
                     widget.assortment.price?.toStringAsFixed(2)??'0',
                     style: const TextStyle(

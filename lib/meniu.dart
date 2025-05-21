@@ -1,16 +1,12 @@
-import 'package:core_retail/data/bill/models/line/restaurant_line_model.dart';
-import 'package:core_retail/data/price_list/models/assortment/topping_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kiosk/price_list/price_list_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:kiosk/provider/language_provider.dart';
+import 'package:animated_text_kit/animated_text_kit.dart'; // Added animated_text_kit package
 import 'generated/l10n.dart';
 import 'order.dart';
-import 'scan.dart';
-import 'product_overlay.dart';
 import 'package:kiosk/provider/cart_provider.dart';
-import 'package:kiosk/provider/menu_translations.dart';
 
 class MeniuPage extends StatefulWidget {
   const MeniuPage({super.key});
@@ -18,7 +14,36 @@ class MeniuPage extends StatefulWidget {
   @override
   State<MeniuPage> createState() => _MeniuPageState();
 }
-class _MeniuPageState extends State<MeniuPage> {
+
+class _MeniuPageState extends State<MeniuPage> with SingleTickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Setup fade animation for price
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _fadeController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _fadeController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +56,6 @@ class _MeniuPageState extends State<MeniuPage> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
       home: Scaffold(
         body: Column(
           children: [
@@ -54,10 +78,21 @@ class _MeniuPageState extends State<MeniuPage> {
                     },
                     child: Stack(
                       children: [
-                        const Icon(
-                          Icons.shopping_cart,
-                          color: Colors.white,
-                          size: 40,
+                        // Shopping cart icon with pulse animation
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 1.0, end: 1.2),
+                          duration: const Duration(milliseconds: 800),
+                          builder: (context, value, child) {
+                            return Transform.scale(
+                              scale: value,
+                              child: child,
+                            );
+                          },
+                          child: const Icon(
+                            Icons.shopping_cart,
+                            color: Colors.white,
+                            size: 40,
+                          ),
                         ),
                         Positioned(
                           right: 0,
@@ -86,9 +121,11 @@ class _MeniuPageState extends State<MeniuPage> {
                       ],
                     ),
                   ),
-
                   const SizedBox(width: 20),
-                   Text(
+
+                  // "Total" text with typewriter animation
+                  const SizedBox(width: 20),
+                  Text(
                     S.of(context).total,
                     style: const TextStyle(
                       color: Colors.white,
@@ -116,7 +153,6 @@ class _MeniuPageState extends State<MeniuPage> {
                 ],
               ),
             ),
-
           ],
         ),
       ),

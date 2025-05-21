@@ -1,8 +1,9 @@
 import 'package:core_retail/data/bill/models/line/line_model.dart';
-import 'package:core_retail/data/bill/models/line/restaurant_line_model.dart';
 import 'package:core_retail/data/price_list/models/assortment/assortment_model.dart';
 import 'package:core_retail/data/price_list/models/assortment/topping_model.dart';
+import 'package:core_retail/presentation/restaurant_assortment_preference/bloc/restaurant_assortment_preference_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:kiosk/provider/order_type_provider.dart';
 import 'order.dart';
@@ -25,8 +26,9 @@ class ProductOverlay extends StatefulWidget {
 class _ProductOverlayState extends State<ProductOverlay> {
   int quantity = 1;
   List<ToppingModel> selectedToppings = [];
-  List<ToppingModel> availableToppings = [ToppingModel(name: 'Topping test', price: 5, id: '1')];
 
+
+  
   double get totalPrice {
     double basePrice;
     try {
@@ -47,6 +49,12 @@ class _ProductOverlayState extends State<ProductOverlay> {
         selectedToppings.add(topping);
       }
     });
+  }
+  
+  @override
+  void initState() {
+    context.read<RestaurantAssortmentPreferenceBloc>().add(GetRestaurantAssortment(assortmentId:  widget.assortment.id??''));
+    super.initState();
   }
 
   @override
@@ -238,228 +246,173 @@ class _ProductOverlayState extends State<ProductOverlay> {
                                 ),
                               ),
                             ),
+
                           ],
                         ),
 
                         const SizedBox(height: 50),
 
-                        // Toppings section
-                        if (availableToppings.isNotEmpty)
-                          Column(
-                            children: availableToppings.map((topping) {
-                              final isSelected = selectedToppings.any((t) => t.id == topping.id);
-                              final toppingQuantity = isSelected
-                                  ? selectedToppings.where((t) => t.id == topping.id).length
-                                  : 0;
+                            // Toppings section
+                          BlocBuilder<RestaurantAssortmentPreferenceBloc, RestaurantAssortmentPreferenceState>(
+                            builder: (context, state) {
+                              if(state is RestaurantAssortmentPreferenceLoaded) {
+                                final availableToppings = state
+                                    .restaurantAssortment.toppings;
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        topping.name,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontFamily: 'Arial',
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '${topping.price} MDL',
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontFamily: 'Arial',
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        // Quantity controls for each topping
-                                        Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  if (toppingQuantity > 0) {
-                                                    selectedToppings.remove(topping);
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                width: 25,
-                                                height: 25,
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xFFD9D9D9),
-                                                  borderRadius: BorderRadius.circular(4),
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    '-',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                      fontFamily: 'Arial',
-                                                    ),
-                                                  ),
-                                                ),
+                                return Column(
+                                  children: availableToppings.map((topping) {
+                                    final isSelected = selectedToppings.any((
+                                        t) => t.id == topping.id);
+                                    final toppingQuantity = isSelected
+                                        ? selectedToppings
+                                        .where((t) => t.id == topping.id)
+                                        .length
+                                        : 0;
+
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              topping.name,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontFamily: 'Arial',
                                               ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            const SizedBox(width: 5),
-                                            Container(
-                                              width: 25,
-                                              height: 25,
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                toppingQuantity.toString(),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '${topping.price} MDL',
                                                 style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 14,
                                                   fontFamily: 'Arial',
                                                 ),
                                               ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedToppings.add(topping);
-                                                });
-                                              },
-                                              child: Container(
-                                                width: 25,
-                                                height: 25,
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xFFD9D9D9),
-                                                  borderRadius: BorderRadius.circular(4),
+                                              const SizedBox(width: 10),
+                                              if(topping.isQuantity)
+                                              // Quantity controls for each topping
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (toppingQuantity > 0) {
+                                                            selectedToppings.remove(topping);
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        width: 25,
+                                                        height: 25,
+                                                        decoration: BoxDecoration(
+                                                          color: const Color(0xFFD9D9D9),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            '-',
+                                                            style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 18,
+                                                              fontFamily: 'Arial',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Container(
+                                                      width: 25,
+                                                      height: 25,
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        toppingQuantity.toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14,
+                                                          fontFamily: 'Arial',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          selectedToppings.add(topping);
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        width: 25,
+                                                        height: 25,
+                                                        decoration: BoxDecoration(
+                                                          color: const Color(0xFFD9D9D9),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            '+',
+                                                            style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 18,
+                                                              fontFamily: 'Arial',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    '+',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                      fontFamily: 'Arial',
+                                              if(!topping.isQuantity)
+                                              // Checkbox button for non-quantity toppings
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _toggleTopping(topping);
+                                                  },
+                                                  child: Container(
+                                                    width: 25,
+                                                    height: 25,
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected ? Colors.yellow : const Color(0xFFD9D9D9),
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      border: Border.all(
+                                                        color: Colors.black,
+                                                        width: 1,
+                                                      ),
+                                                    ),
+                                                    child: Center(
+                                                      child: isSelected
+                                                          ? const Icon(Icons.check, size: 18, color: Colors.black)
+                                                          : null,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                  }).toList(),
+                                );
+
+                              }else if(state is RestaurantAssortmentPreferenceLoading){
+                               return Center(child: CircularProgressIndicator(),);
+                              }
+
+                              return SizedBox.shrink();
+                            }
+
                           ),
 
-                        const SizedBox(height: 20),
 
-                        // Bottom row with total price and quantity controls
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.assortment.name??'',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontFamily: 'Arial',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    '${totalPrice.toStringAsFixed(2)} MDL',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12,
-                                      fontFamily: 'Arial',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (quantity > 1) quantity--;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 15,
-                                      height: 25,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD9D9D9),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          '-',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontFamily: 'Arial',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 10,
-                                    height: 20,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      quantity.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontFamily: 'Arial',
-                                      ),
-                                    ),
-                                  ),
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        quantity++;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 15,
-                                      height: 25,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD9D9D9),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          '+',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontFamily: 'Arial',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 80), // Space for the fixed button
+                        // Space for the fixed button
                       ],
                     ),
                   ),
@@ -490,10 +443,8 @@ class _ProductOverlayState extends State<ProductOverlay> {
                         )).toList();
 
                         final cartItem = LineModel(
-                       name: widget.assortment.name,
-                            vat: widget.assortment.vat,
+                          assortment: widget.assortment,
                             quantity: quantity.toDouble(),
-                            salePrice: widget.assortment.price
                         );
 
                         Provider.of<CartProvider>(context, listen: false).addToCart(cartItem);

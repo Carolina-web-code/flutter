@@ -3,6 +3,7 @@ import 'package:core_retail/core_retail.dart';
 import 'package:core_retail/generated/l10n.dart';
 import 'package:core_retail/presentation/pay/bloc/pay_bloc.dart';
 import 'package:core_retail/presentation/price_list/bloc/price_list_bloc.dart';
+import 'package:core_retail/presentation/restaurant_assortment_preference/bloc/restaurant_assortment_preference_bloc.dart';
 import 'package:core_retail/presentation/services/bloc/fiscal_connection_bloc/fiscal_connection_bloc.dart';
 import 'package:core_retail/presentation/services/bloc/local_server_connection_bloc/local_server_connection_bloc.dart';
 import 'package:core_retail/presentation/services/bloc/mcr_connection_bloc/mcr_connection_bloc.dart';
@@ -40,7 +41,8 @@ providers: [
   BlocProvider(create: (_)=> FiscalConnectionBloc()),
   BlocProvider(create: (_)=> McrConnectionBloc()),
   BlocProvider(create: (_)=> PayBloc()),
-  BlocProvider(create: (_)=> PriceListBloc())
+  BlocProvider(create: (_)=> PriceListBloc()),
+  BlocProvider(create: (_)=> RestaurantAssortmentPreferenceBloc())
 ],
       child: MyApp())));
 }
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(400, 800),
+      designSize: const Size(600, 960),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
