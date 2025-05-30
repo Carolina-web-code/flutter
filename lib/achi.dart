@@ -107,7 +107,7 @@ class _AchiPageState extends State<AchiPage> {
                 ignoring: true, // Nu permite interacțiunea
                 child: Icon(
                   Icons.arrow_forward,
-                  color: Colors.black.withOpacity(0.5), // un pic transparent
+                  color: Colors.black,
                   size: 40,
                 ),
               ),

@@ -28,7 +28,6 @@ class _ProductWidgetState extends State<ProductWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
             Container(
               height: 150,
               width: 150,

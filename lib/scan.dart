@@ -238,7 +238,8 @@ class _PizzaPageState extends State<PizzaPage> with SingleTickerProviderStateMix
                                 boxShadow: _isButtonPressed && _currentPressedButton == 1
                                     ? [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black,
+                                        //.withOpacity(0.2),
                                     blurRadius: 10,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 5),
@@ -279,7 +280,8 @@ class _PizzaPageState extends State<PizzaPage> with SingleTickerProviderStateMix
                                 boxShadow: _isButtonPressed && _currentPressedButton == 2
                                     ? [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black,
+                                        //.withOpacity(0.2),
                                     blurRadius: 10,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 5),

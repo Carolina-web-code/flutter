@@ -41,7 +41,12 @@ dependencies:
   simple_animations: ^5.0.0+1
   # Pentru control mai bun al animațiilor
   animated_text_kit: ^4.2.2
+  font_awesome_flutter: ^10.6.0
   flare_flutter: ^3.0.0
+
+  qr_flutter: ^4.1.0
+  code_scan_listener: ^0.4.1
+
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.3.5
@@ -104,7 +109,23 @@ flutter:
     - assets/card.png
     - assets/numerar.png
     - assets/card1.png
+    - assets/ico.png
+    - assets/qrcodachi.png
+    - assets/bifa.png
+    - assets/di.png
 
+  fonts:
+    - family: Arial
+      fonts:
+        - asset: assets/fonts/arial.ttf
+          weight: 400  # Regular
+        - asset: assets/fonts/arialbd.ttf
+          weight: 700  # Bold
+        - asset: assets/fonts/ariali.ttf
+          weight: 400  # Italic (greutatea rămâne 400, stilul se setează prin fontStyle)
+          style: italic
+        - asset: assets/fonts/ariblk.ttf
+          weight: 900  # Black (foarte bold)
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

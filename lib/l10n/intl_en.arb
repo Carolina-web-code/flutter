@@ -10,7 +10,7 @@
   "mostFavorite": "Most Favorite",
   "payment": "Payment",
   "card": "Bank card",
-  "num": "Cash",
+  "num": "  Cash",
   "approveCardMessage": "Bring your bank card closer to\nthe terminal to complete\nthe payment.",
   "payment_amount": "Payment amount",
   "card_payment": "Card payment",
@@ -62,5 +62,9 @@
   "whippedCream": "Whipped Cream",
   "vanillaFlavor": "Vanilla Flavor",
   "tapiocaPearls": "Tapioca Pearls",
-  "caramelCream": "Caramel Cream"
+  "caramelCream": "Caramel Cream",
+  "inactivityTitle": "Inactivity Detected",
+  "inactivityMessage": "Do you want to clear your cart and start over?",
+  "yes": "Yes",
+  "no": "No"
 }

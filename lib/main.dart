@@ -182,7 +182,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                         'RO',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 48.sp,
+                          fontSize: 24,
                           fontFamily: 'Arial',
                           height: 2,
                           letterSpacing: -0.96,
@@ -199,7 +199,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                         'RU',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 48.sp,
+                          fontSize: 24,
                           fontFamily: 'Arial',
                           height: 2,
                           letterSpacing: -0.96,
@@ -211,14 +211,14 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
               ),
             ),
 
-            SizedBox(height: 300.h), // Space after RO/RU
+            SizedBox(height: 30.h), // Space after RO/RU
 
             // Title
             Text(
-              '${S.of(context).sign_in}',
+              S.of(context).sign_in,
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 56.sp,
+                fontSize: 28,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
               ),
@@ -231,13 +231,13 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
               '${S.of(context).opt} ',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 48.sp,
+                fontSize: 20,
                 fontFamily: 'Roboto',
                 height: 0.02,
               ),
             ),
 
-            SizedBox(height: 100.h),
+            SizedBox(height: 10.h),
 
             // License input boxes (90×94)
             Row(
@@ -255,7 +255,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                     child: Text(
                       licenseDigits[index],
                       style: TextStyle(
-                        fontSize: 48.sp,
+                        fontSize: 20,
                         fontFamily: 'Roboto',
                       ),
                     ),
@@ -264,7 +264,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
               }),
             ),
 
-            SizedBox(height: 350.h),
+            SizedBox(height: 35.h),
 
             // Switch button
             Switch(
@@ -283,7 +283,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
               '${S.of(context).regim} ',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 32.sp,
+                fontSize: 18,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
               ),
@@ -304,7 +304,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                     _buildDigitButton('9'),
                   ],
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -315,7 +315,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                     _buildDigitButton('6'),
                   ],
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -326,7 +326,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
                     _buildDigitButton('3'),
                   ],
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -370,7 +370,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 48.sp,
+              fontSize: 32,
               fontFamily: 'Work Sans',
               height: 0.02,
             ),
@@ -399,7 +399,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
           ),
         ),
         child: Center(
-          child: Icon(Icons.backspace, size: 48.sp),
+          child: Icon(Icons.backspace, size: 20.sp),
         ),
       ),
     );
@@ -424,7 +424,7 @@ class _LicenseActivationScreenState extends State<LicenseActivationScreen> {
           ),
         ),
         child: Center(
-          child: Icon(Icons.settings, size: 48.sp), // Iconița de settings
+          child: Icon(Icons.settings, size: 28.sp), // Iconița de settings
         ),
       ),
     );

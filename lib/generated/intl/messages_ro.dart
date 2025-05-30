@@ -65,6 +65,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "extraMozzarella": MessageLookupByLibrary.simpleMessage("Mozzarella Extra"),
     "fetaCheese": MessageLookupByLibrary.simpleMessage("Brânză feta"),
     "i": MessageLookupByLibrary.simpleMessage("Inapoi"),
+    "inactivityMessage": MessageLookupByLibrary.simpleMessage(
+      "Doriți să ștergeți coșul și să începeți de la început?",
+    ),
+    "inactivityTitle": MessageLookupByLibrary.simpleMessage(
+      "Inactivitate detectată",
+    ),
     "lemonCream": MessageLookupByLibrary.simpleMessage("Cremă de lămâie"),
     "loc": MessageLookupByLibrary.simpleMessage("Pe loc"),
     "make_payment": MessageLookupByLibrary.simpleMessage("Efectuează plata"),
@@ -72,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mushrooms": MessageLookupByLibrary.simpleMessage("Ciuperci"),
     "myOrder": MessageLookupByLibrary.simpleMessage("Comanda mea"),
     "n": MessageLookupByLibrary.simpleMessage("Achitare"),
+    "no": MessageLookupByLibrary.simpleMessage("Nu"),
     "num": MessageLookupByLibrary.simpleMessage("Numerar"),
     "olives": MessageLookupByLibrary.simpleMessage("Măsline"),
     "opt": MessageLookupByLibrary.simpleMessage(
@@ -120,5 +127,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "what": MessageLookupByLibrary.simpleMessage("Ce ai vrea   \nsă  "),
     "whippedCream": MessageLookupByLibrary.simpleMessage("Frișcă"),
+    "yes": MessageLookupByLibrary.simpleMessage("Da"),
   };
 }

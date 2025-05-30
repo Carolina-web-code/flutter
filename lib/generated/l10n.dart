@@ -130,9 +130,9 @@ class S {
     return Intl.message('Bank card', name: 'card', desc: '', args: []);
   }
 
-  /// `Cash`
+  /// `  Cash`
   String get num {
-    return Intl.message('Cash', name: 'num', desc: '', args: []);
+    return Intl.message('  Cash', name: 'num', desc: '', args: []);
   }
 
   /// `Bring your bank card closer to\nthe terminal to complete\nthe payment.`
@@ -548,6 +548,36 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Inactivity Detected`
+  String get inactivityTitle {
+    return Intl.message(
+      'Inactivity Detected',
+      name: 'inactivityTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to clear your cart and start over?`
+  String get inactivityMessage {
+    return Intl.message(
+      'Do you want to clear your cart and start over?',
+      name: 'inactivityMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message('No', name: 'no', desc: '', args: []);
   }
 }
 

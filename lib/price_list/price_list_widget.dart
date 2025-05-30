@@ -20,23 +20,30 @@ class PriceListWidget extends StatefulWidget {
 class _PriceListWidgetState extends State<PriceListWidget> {
   final selectedIds = ValueNotifier<List<String>>([]);
   final ScrollController scrollController = ScrollController();
-  final PageController _pageController = PageController(viewportFraction: 0.9);
-  int _currentPage = 0;
+  final ScrollController _categoryController = ScrollController();
+  bool _showArrow = false;
 
   @override
   void initState() {
     super.initState();
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page?.round() ?? 0;
-      });
+    // Add a post-frame callback to check if scrolling is needed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfScrollNeeded();
     });
+  }
+
+  void _checkIfScrollNeeded() {
+    if (_categoryController.hasClients) {
+      setState(() {
+        _showArrow = _categoryController.position.maxScrollExtent > 0;
+      });
+    }
   }
 
   @override
   void dispose() {
     scrollController.dispose();
-    _pageController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
@@ -63,19 +70,13 @@ class _PriceListWidgetState extends State<PriceListWidget> {
               List<AssortmentModel> priceList = state.assortments;
 
               if (v.isNotEmpty) {
-                priceList =
-                    priceList
-                        .where((e) => (v.last == (e.parentId ?? '')))
-                        .toList();
+                priceList =priceList.where((e) => (v.last == (e.parentId ?? ''))).toList();
               }
               return Row(
                 children: [
-                  // Left side (30%) with carousel animation
+                  // Left side (30%) with categories
                   Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.3,
+                    width: MediaQuery.of(context).size.width * 0.3,
                     color: Colors.white,
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -86,27 +87,23 @@ class _PriceListWidgetState extends State<PriceListWidget> {
                           height: 50,
                           width: 70,
                         ),
-                        const SizedBox(height: 20),
+                         const SizedBox(height: 20),
                         // "Ce ai vrea să comanzi?" text
                         RichText(
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: S
-                                    .of(context)
-                                    .what,
+                                text: S.of(context).what,
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
                                   fontFamily: 'Arial',
-                                  height: 1.4,
+                                  height: 1.2,
                                   letterSpacing: -0.64,
                                 ),
                               ),
                               TextSpan(
-                                text: S
-                                    .of(context)
-                                    .order,
+                                text: S.of(context).order,
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -119,154 +116,117 @@ class _PriceListWidgetState extends State<PriceListWidget> {
                           ),
                         ),
                         const SizedBox(height: 20),
-
-                        // Carousel for categories
-                        Expanded(
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: categories.length,
-                            itemBuilder: (context, index) {
-                              return AnimatedBuilder(
-                                animation: _pageController,
-                                builder: (context, child) {
-                                  double value = 1.0;
-                                  if (_pageController.position.haveDimensions) {
-                                    value = _pageController.page! - index;
-                                    value = (1 - (value.abs() * 0.3)).clamp(
-                                        0.0, 1.0);
-                                  }
-
-                                  return Center(
-                                    child: SizedBox(
-                                      height: Curves.easeOut.transform(value) *
-                                          100,
-                                      width: Curves.easeOut.transform(value) *
-                                          300,
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _selectId(categories[index].id ?? '');
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: v.contains(categories[index].id)
-                                          ? Colors.yellow
-                                          : Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 5),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center,
-                                      children: [
-                                        SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: Image.asset(
-                                            'assets/freshofsummer.png',
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          categories[index].name ?? '',
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontFamily: 'Arial',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                        // Categories section
+                        if (categories.isNotEmpty)
+                          Container(
+                            height: 120,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: NotificationListener<ScrollNotification>(
+                                    onNotification: (notification) {
+                                      if (notification is ScrollEndNotification) {
+                                        _checkIfScrollNeeded();
+                                      }
+                                      return false;
+                                    },
+                                    child: SingleChildScrollView(
+                                      controller: _categoryController,
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: categories.map((category) {
+                                          return Container(
+                                            width: 70,
+                                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _selectId(category.id ?? '');
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: v.contains(category.id)
+                                                      ? Colors.yellow
+                                                      : Colors.grey[200],
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black,
+                                                      blurRadius: 5,
+                                                      offset: const Offset(0, 5),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 50,
+                                                      height: 50,
+                                                      child: Image.asset(
+                                                        'assets/freshofsummer.png',
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      category.name ?? '',
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                        fontFamily: 'Arial',
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-
-                        // Page indicator
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            categories.length,
-                                (index) =>
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 4),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _currentPage == index
-                                        ? Colors.black
-                                        : Colors.grey,
+                                // Black arrow - only visible if scrolling is possible
+                                if (_showArrow)
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    size: 40,
+                                    color: Colors.black, // Changed to black
                                   ),
-                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-
-                        // Down arrow icon
-                        Center(
-                          child: Icon(
-                            Icons.arrow_drop_down,
-                            size: 40,
-                            color: Colors.grey[600],
-                          ),
-                        ),
                       ],
                     ),
                   ),
 
-                  // Right side (70%) with hero animations
+                  // Right side (70%) with products
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 8, top: 20),
+                      padding: const EdgeInsets.only(left: 20, right: 8, top: 0),  // top redus
                       color: Colors.grey[100],
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // Logo and "Cele mai Favorite" text
-                          const SizedBox(height: 10),
-                          Hero(
-                            tag: 'favorite-text',
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Text(
-                                S
-                                    .of(context)
-                                    .mostFavorite,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 26,
-                                  fontFamily: 'Arial',
-                                  height: 1,
-                                ),
-                              ),
+                          Text(
+                            S.of(context).mostFavorite,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 26,
+                              fontFamily: 'Arial',
                             ),
                           ),
-                          if(v.isNotEmpty)
-                            IconButton(onPressed: () {
-                              final list = v.sublist(0, v.length-1);
-
-                              selectedIds.value = list;
-                            }, icon: Icon(Icons.arrow_back)),
-                          // Grid of favorite items (2 columns) with hero animations
+                          if (v.isNotEmpty)
+                            IconButton(
+                              onPressed: () {
+                                final list = v.sublist(0, v.length - 1);
+                                selectedIds.value = list;
+                              },
+                              icon: Icon(Icons.arrow_back),
+                            ),
                           Expanded(
                             child: Scrollbar(
                               interactive: true,
@@ -274,21 +234,18 @@ class _PriceListWidgetState extends State<PriceListWidget> {
                               controller: scrollController,
                               child: GridView.builder(
                                 controller: scrollController,
-                                gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  crossAxisSpacing: 20,
-                                  mainAxisSpacing: 30,
-                                  childAspectRatio: 0.50,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 70,  // spațiu vertical redus între items
+                                 // childAspectRatio: 0.50,
                                 ),
                                 itemCount: priceList.length,
                                 itemBuilder: (_, index) {
                                   final product = priceList[index];
-                                  return Hero(
-                                    tag: 'product-${product.id}',
-                                    child: ProductWidget(assortment: product,
-                                      callback: () =>
-                                          _selectId(product.id ?? ''),),
+                                  return ProductWidget(
+                                    assortment: product,
+                                    callback: () => _selectId(product.id ?? ''),
                                   );
                                 },
                               ),
@@ -297,13 +254,12 @@ class _PriceListWidgetState extends State<PriceListWidget> {
                         ],
                       ),
                     ),
-                  ),
+                  )
                 ],
               );
             },
           );
         }
-
         return Text('Error');
       },
     );

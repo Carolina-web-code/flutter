@@ -4,6 +4,7 @@ import 'package:core_retail/data/price_list/models/assortment/topping_model.dart
 import 'package:core_retail/presentation/restaurant_assortment_preference/bloc/restaurant_assortment_preference_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiosk/recomandari.dart';
 import 'package:provider/provider.dart';
 import 'package:kiosk/provider/order_type_provider.dart';
 import 'order.dart';
@@ -136,7 +137,7 @@ class _ProductOverlayState extends State<ProductOverlay> {
                           widget.assortment.name??'',
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 24,
+                            fontSize: 18,
                             fontFamily: 'Arial',
                             fontWeight: FontWeight.bold,
                           ),
@@ -146,7 +147,7 @@ class _ProductOverlayState extends State<ProductOverlay> {
 
                         // Product description
                         Text(
-                          widget.assortment.description??'Ceva descriere',
+                          widget.assortment.description??'descriere',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black,
@@ -427,28 +428,28 @@ class _ProductOverlayState extends State<ProductOverlay> {
                     color: Colors.yellow,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
+                      // In the ProductOverlay's OK button onTap handler:
                       onTap: () {
                         double basePrice;
                         try {
-                          basePrice = widget.assortment.price??0;
+                          basePrice = widget.assortment.price ?? 0;
                         } catch (e) {
                           basePrice = 85.00;
                         }
 
-                        final toppings = selectedToppings.map((t) => ToppingModel(
-                          id: t.id,
-                          name: t.name,
-                          price: t.price,
-                          // image: t.image,
-                        )).toList();
-
                         final cartItem = LineModel(
                           assortment: widget.assortment,
-                            quantity: quantity.toDouble(),
+                          quantity: quantity.toDouble(),
                         );
 
                         Provider.of<CartProvider>(context, listen: false).addToCart(cartItem);
-                        Navigator.of(context).pop();
+
+                        // Navigate to recommendations with the product data
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const RecomandariPage(),
+                          ),
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),

@@ -63,6 +63,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "extraMozzarella": MessageLookupByLibrary.simpleMessage("Экстра Моцарелла"),
     "fetaCheese": MessageLookupByLibrary.simpleMessage("Фета"),
     "i": MessageLookupByLibrary.simpleMessage("Назад"),
+    "inactivityMessage": MessageLookupByLibrary.simpleMessage(
+      "Хотите очистить корзину и начать заново?",
+    ),
+    "inactivityTitle": MessageLookupByLibrary.simpleMessage(
+      "Обнаружена неактивность",
+    ),
     "lemonCream": MessageLookupByLibrary.simpleMessage("Лимонный крем"),
     "loc": MessageLookupByLibrary.simpleMessage("На месте"),
     "make_payment": MessageLookupByLibrary.simpleMessage("Сделать платеж"),
@@ -70,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mushrooms": MessageLookupByLibrary.simpleMessage("Грибы"),
     "myOrder": MessageLookupByLibrary.simpleMessage("Mой заказ"),
     "n": MessageLookupByLibrary.simpleMessage("Oплата"),
+    "no": MessageLookupByLibrary.simpleMessage("Нет"),
     "num": MessageLookupByLibrary.simpleMessage("Наличными"),
     "olives": MessageLookupByLibrary.simpleMessage("Оливки"),
     "opt": MessageLookupByLibrary.simpleMessage(
@@ -116,5 +123,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "what": MessageLookupByLibrary.simpleMessage("Что вы хотели бы \n "),
     "whippedCream": MessageLookupByLibrary.simpleMessage("Взбитые сливки"),
+    "yes": MessageLookupByLibrary.simpleMessage("Да"),
   };
 }

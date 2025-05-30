@@ -62,5 +62,9 @@
   "whippedCream": "Frișcă",
   "vanillaFlavor": "Aromă de vanilie",
   "tapiocaPearls": "Perle de tapioca",
-  "caramelCream": "Cremă de caramel"
+  "caramelCream": "Cremă de caramel",
+  "inactivityTitle": "Inactivitate detectată",
+  "inactivityMessage": "Doriți să ștergeți coșul și să începeți de la început?",
+  "yes": "Da",
+  "no": "Nu"
 }

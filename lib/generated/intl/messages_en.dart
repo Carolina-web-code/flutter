@@ -57,6 +57,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "extraMozzarella": MessageLookupByLibrary.simpleMessage("Extra Mozzarella"),
     "fetaCheese": MessageLookupByLibrary.simpleMessage("Feta Cheese"),
     "i": MessageLookupByLibrary.simpleMessage("Back"),
+    "inactivityMessage": MessageLookupByLibrary.simpleMessage(
+      "Do you want to clear your cart and start over?",
+    ),
+    "inactivityTitle": MessageLookupByLibrary.simpleMessage(
+      "Inactivity Detected",
+    ),
     "lemonCream": MessageLookupByLibrary.simpleMessage("Lemon Cream"),
     "loc": MessageLookupByLibrary.simpleMessage("On the spot"),
     "make_payment": MessageLookupByLibrary.simpleMessage("Make payment"),
@@ -64,7 +70,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "mushrooms": MessageLookupByLibrary.simpleMessage("Mushrooms"),
     "myOrder": MessageLookupByLibrary.simpleMessage("My Order"),
     "n": MessageLookupByLibrary.simpleMessage("Payment"),
-    "num": MessageLookupByLibrary.simpleMessage("Cash"),
+    "no": MessageLookupByLibrary.simpleMessage("No"),
+    "num": MessageLookupByLibrary.simpleMessage("  Cash"),
     "olives": MessageLookupByLibrary.simpleMessage("Olives"),
     "opt": MessageLookupByLibrary.simpleMessage("Enter your 8-digit license"),
     "order": MessageLookupByLibrary.simpleMessage("order?"),
@@ -112,5 +119,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "what": MessageLookupByLibrary.simpleMessage("What would you like \n to "),
     "whippedCream": MessageLookupByLibrary.simpleMessage("Whipped Cream"),
+    "yes": MessageLookupByLibrary.simpleMessage("Yes"),
   };
 }
